@@ -37,12 +37,9 @@ namespace MBFastDialogue
 		private List<ConversationCharacterData> cached_playerSidePartners;
 		private ConversationCharacterData cached_firstCharacterToTalk;
 
-		public delegate void StatePopHandler(GameState poped);
-		private List<(GameState, StatePopHandler)> stateResumeHandler = new List<(GameState, StatePopHandler)>();
-
-		private GameState permittedState;
-
 		private GameState prevState;
+
+		private long pausedTicks = 0;
 
 		protected override void OnBeforeInitialModuleScreenSetAsRoot()
 		{
@@ -62,11 +59,17 @@ namespace MBFastDialogue
 					ReflectionUtil.ForceCall<object>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_on_init", new object[] { args });
 				}), GameOverlays.MenuOverlayType.Encounter, GameMenu.MenuFlags.none, null);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_attack", "{=o1pZHZOF}{ATTACK_TEXT}!",
-				CampaignManagerConditionOf("game_menu_encounter_attack_on_condition"),
+				new GameMenuOption.OnConditionDelegate((args) => {
+					bool atWar = cached_otherSidePartners[0].Party != null && cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(cached_otherSidePartners[0].Party.MapFaction);
+					return atWar && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args });
+				}),
 				CampaignManagerConsequenceOf("game_menu_encounter_attack_on_consequence"),
 				false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_send_troops", "{=rxSz5dY1}Send troops.",
-				CampaignManagerConditionOf("game_menu_encounter_order_attack_on_condition"),
+				new GameMenuOption.OnConditionDelegate((args) => {
+					bool atWar = cached_otherSidePartners[0].Party != null && cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(cached_otherSidePartners[0].Party.MapFaction);
+					return atWar && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
+				}),
 				CampaignManagerConsequenceOf("game_menu_encounter_order_attack_on_consequence"), 
 				false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_getaway", "{=qNgGoqmI}Try to get away.",
@@ -81,7 +84,6 @@ namespace MBFastDialogue
 				new GameMenuOption.OnConsequenceDelegate((args) =>
 				{
 					CampaignMission.OpenConversationMission(cached_playerSidePartners, cached_otherSidePartners, cached_firstCharacterToTalk);
-					permittedState = GameStateManager.Current.ActiveState;
 				}), false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_surrend", "{=3nT5wWzb}Surrender.",
 				CampaignManagerConditionOf("game_menu_encounter_surrender_on_condition"),
@@ -97,11 +99,24 @@ namespace MBFastDialogue
 
 		protected override void OnApplicationTick(float dt)
 		{
-			if(GameStateManager.Current != null && GameStateManager.Current.ActiveState != prevState)
+			if(GameStateManager.Current.ActiveState is MapState mapState)
+			{
+				if(Campaign.Current.TimeControlMode == CampaignTimeControlMode.Stop)
+				{
+					pausedTicks++;
+				}
+				else
+				{
+					pausedTicks = 0;
+				}
+			}
+
+			if (GameStateManager.Current != null && GameStateManager.Current.ActiveState != prevState)
 			{
 				OnStateChange();
 				prevState = GameStateManager.Current.ActiveState;
 			}
+
 		}
 
 		private EncounterGameMenuBehavior GetGlobalCampaignBehaviorManager()
@@ -125,43 +140,22 @@ namespace MBFastDialogue
 			});
 		}
 
-		private bool ShouldSkipDialogue(string charName)
-		{
-			if(charName.Contains("villager") || charName.Contains("looter") || charName.Contains("lord") || charName.Contains("spc_"))
-			{
-				return true;
-			}
-
-			if(charName.Contains("boss"))
-			{
-				return false;
-			}
-
-			if(charName.Contains("bandits") || charName.Contains("sea_raiders"))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
 		private void OnStateChange()
 		{
-			foreach(var handler in stateResumeHandler.ToArray())
+			if (GameStateManager.Current.ActiveState is MissionState missionState && prevState is MapState prevMapState)
 			{
-				if(handler.Item1 == GameStateManager.Current.ActiveState)
-				{
-					handler.Item2(GameStateManager.Current.ActiveState);
-					stateResumeHandler.Remove(handler);
-				}
-			}
-
-			if (GameStateManager.Current.ActiveState is MissionState missionState && prevState is MapState)
-			{
-				if (missionState == permittedState)
+				// Only open if this is a random meeting on the map
+				if(Campaign.Current.MapStateData.GameMenuId != "encounter_meeting")
 				{
 					return;
 				}
+
+				//only open if another menu wasn't just open
+				if (pausedTicks > 2)
+				{
+					return;
+				}
+
 				var mission = missionState.CurrentMission;
 				var convoLogic = mission.GetMissionBehaviour<ConversationMissionLogic>();
 				if (convoLogic == null)
@@ -171,23 +165,12 @@ namespace MBFastDialogue
 				var _otherSidePartners = ReflectionUtil.ForceGet<List<ConversationCharacterData>>(convoLogic, "_otherSidePartners");
 				var _playerSidePartners = ReflectionUtil.ForceGet<List<ConversationCharacterData>>(convoLogic, "_playerSidePartners");
 				var _firstCharacterToTalk = ReflectionUtil.ForceGet<ConversationCharacterData>(convoLogic, "_firstCharacterToTalk");
-				var otherPartyLeader = _otherSidePartners[0];
-				var charName = otherPartyLeader.Character.OriginCharacterStringId;
-				bool atWar = otherPartyLeader.Party.MapFaction.IsAtWarWith(_playerSidePartners[0].Party.MapFaction);
 
-				if(!atWar || otherPartyLeader.Character.StringId.Contains("tutorial"))
-				{
-					return;
-				}
-
-				if (ShouldSkipDialogue(charName))
-				{
-					cached_playerSidePartners = _playerSidePartners;
-					cached_otherSidePartners = _otherSidePartners;
-					cached_firstCharacterToTalk = _firstCharacterToTalk;
-					GameStateManager.Current.PopState();
-					GameMenu.SwitchToMenu("fast_combat_menu");
-				}
+				cached_playerSidePartners = _playerSidePartners;
+				cached_otherSidePartners = _otherSidePartners;
+				cached_firstCharacterToTalk = _firstCharacterToTalk;
+				GameStateManager.Current.PopState();
+				GameMenu.ActivateGameMenu("fast_combat_menu");
 			}
 		}
 	}
