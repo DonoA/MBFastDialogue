@@ -2,6 +2,15 @@
   "version": 3,
   "targets": {
     ".NETStandard,Version=v2.0": {
+      "Lib.Harmony/2.0.0.9": {
+        "type": "package",
+        "compile": {
+          "lib/net45/0Harmony.dll": {}
+        },
+        "runtime": {
+          "lib/net45/0Harmony.dll": {}
+        }
+      },
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -29,6 +38,31 @@
     }
   },
   "libraries": {
+    "Lib.Harmony/2.0.0.9": {
+      "sha512": "0/5K5p/jkulE5GoFeKk+/YIRt0SLEKDCXhgVs6sVXJKHkTG2iRssNFnUkcnEFr78FwRCW37JSNXynCWZNtoxWA==",
+      "type": "package",
+      "path": "lib.harmony/2.0.0.9",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "HarmonyLogo.png",
+        "LICENSE",
+        "lib.harmony.2.0.0.9.nupkg.sha512",
+        "lib.harmony.nuspec",
+        "lib/net35/0Harmony.dll",
+        "lib/net35/0Harmony.xml",
+        "lib/net45/0Harmony.dll",
+        "lib/net45/0Harmony.xml",
+        "lib/net472/0Harmony.dll",
+        "lib/net472/0Harmony.xml",
+        "lib/net48/0Harmony.dll",
+        "lib/net48/0Harmony.xml",
+        "lib/netcoreapp3.0/0Harmony.dll",
+        "lib/netcoreapp3.0/0Harmony.xml",
+        "lib/netcoreapp3.1/0Harmony.dll",
+        "lib/netcoreapp3.1/0Harmony.xml"
+      ]
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
@@ -176,6 +210,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
+      "Lib.Harmony >= 2.0.0.9",
       "NETStandard.Library >= 2.0.3"
     ]
   },
@@ -216,6 +251,10 @@
     "frameworks": {
       "netstandard2.0": {
         "dependencies": {
+          "Lib.Harmony": {
+            "target": "Package",
+            "version": "[2.0.0.9, )"
+          },
           "NETStandard.Library": {
             "suppressParent": "All",
             "target": "Package",
@@ -236,5 +275,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Lib.Harmony 2.0.0.9' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETStandard,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Lib.Harmony",
+      "targetGraphs": [
+        ".NETStandard,Version=v2.0"
+      ]
+    }
+  ]
 }

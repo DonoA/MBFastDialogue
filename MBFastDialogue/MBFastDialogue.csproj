@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.0.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="ManagedStarter">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client\Bannerlord.exe</HintPath>
     </Reference>
