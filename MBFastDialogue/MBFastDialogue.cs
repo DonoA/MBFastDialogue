@@ -46,6 +46,19 @@ namespace MBFastDialogue
 			InformationManager.DisplayMessage(new InformationMessage("Loaded MBFastDialogue.", Color.FromUint(4282569842U)));
 		}
 
+		private bool ShouldShowWarOptions()
+		{
+			try
+			{
+				return this.cached_otherSidePartners[0].Party != null && this.cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(this.cached_otherSidePartners[0].Party.MapFaction);
+			}
+			catch (Exception ex)
+			{
+				InformationManager.DisplayMessage(new InformationMessage("MBFastDialogue generated an exception " + ex.Message, Color.Black));
+			}
+			return false;
+		}
+
 		protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
 		{
 			var campStarter = gameStarterObject as CampaignGameStarter;
@@ -60,15 +73,13 @@ namespace MBFastDialogue
 				}), GameOverlays.MenuOverlayType.Encounter, GameMenu.MenuFlags.none, null);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_attack", "{=o1pZHZOF}{ATTACK_TEXT}!",
 				new GameMenuOption.OnConditionDelegate((args) => {
-					bool atWar = cached_otherSidePartners[0].Party != null && cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(cached_otherSidePartners[0].Party.MapFaction);
-					return atWar && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args });
+					return ShouldShowWarOptions() && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args });
 				}),
 				CampaignManagerConsequenceOf("game_menu_encounter_attack_on_consequence"),
 				false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_send_troops", "{=rxSz5dY1}Send troops.",
 				new GameMenuOption.OnConditionDelegate((args) => {
-					bool atWar = cached_otherSidePartners[0].Party != null && cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(cached_otherSidePartners[0].Party.MapFaction);
-					return atWar && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
+					return ShouldShowWarOptions() && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
 				}),
 				CampaignManagerConsequenceOf("game_menu_encounter_order_attack_on_consequence"), 
 				false, -1, false);
@@ -83,7 +94,8 @@ namespace MBFastDialogue
 				}),
 				new GameMenuOption.OnConsequenceDelegate((args) =>
 				{
-					CampaignMission.OpenConversationMission(cached_playerSidePartners, cached_otherSidePartners, cached_firstCharacterToTalk);
+					PlayerEncounter.Finish(true);
+					Campaign.Current.HandlePartyEncounter(this.cached_playerSidePartners[0].Party, this.cached_otherSidePartners[0].Party);
 				}), false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_surrend", "{=3nT5wWzb}Surrender.",
 				CampaignManagerConditionOf("game_menu_encounter_surrender_on_condition"),
