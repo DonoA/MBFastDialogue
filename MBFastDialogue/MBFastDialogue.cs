@@ -2,7 +2,10 @@
 using SandBox;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Overlay;
@@ -32,11 +35,76 @@ namespace MBFastDialogue
 		}
 	}
 
+	public class Settings
+	{
+		[XmlElement("pattern_whitelist")]
+		public Whitelist whitelist { get; set; } = new Whitelist();
+	}
+
+	public class Whitelist
+	{
+		[XmlElement("pattern")]
+		public List<string> whitelistPatterns { get; set; } = new List<string>();
+	}
+
+	public static class XmlUtil
+	{
+		public static T SettingsFor<T>(string moduleName)
+		{
+			string settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
+			try
+			{
+				using (XmlReader reader = XmlReader.Create(settingsPath))
+				{
+					XmlRootAttribute root = new XmlRootAttribute();
+					root.ElementName = moduleName + ".Settings";
+					root.IsNullable = true;
+
+					if (reader.MoveToContent() != XmlNodeType.Element)
+					{
+						return default;
+					}
+
+					if (reader.Name != root.ElementName)
+					{
+						return default;
+					}
+
+					XmlSerializer serialiser = new XmlSerializer(typeof(T), root);
+					var loaded = (T)serialiser.Deserialize(reader);
+					return loaded;
+				}
+			}
+			catch (Exception ex)
+			{
+				return default;
+			}
+		}
+	}
+
 	public class SubModule : MBSubModuleBase
 	{
 		private GameState prevState;
 
 		private long pausedTicks = 0;
+
+		private Settings settings = new Settings();
+
+		protected override void OnSubModuleLoad()
+		{
+			try
+			{
+				var newSettings = XmlUtil.SettingsFor<Settings>("MBFastDialogue");
+				if(newSettings != null)
+				{
+					settings = newSettings;
+				}
+			}
+			catch (Exception ex)
+			{
+				InformationManager.DisplayMessage(new InformationMessage("Failed to load config.", Color.FromUint(4282569842U)));
+			}
+		}
 
 		protected override void OnBeforeInitialModuleScreenSetAsRoot()
 		{
@@ -104,7 +172,14 @@ namespace MBFastDialogue
 				}), false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_leave", "{=2YYRyrOO}Leave...",
 				CampaignManagerConditionOf("game_menu_encounter_leave_on_condition"),
-				CampaignManagerConsequenceOf("game_menu_encounter_leave_on_consequence"), true, -1, false);
+				new GameMenuOption.OnConsequenceDelegate((args) =>
+				{
+					MenuHelper.EncounterLeaveConsequence(args);
+					if (PartyBase.MainParty.IsMobile && PartyBase.MainParty.MobileParty != null)
+					{
+						PartyBase.MainParty.MobileParty.IsDisorganized = false;
+					}
+				}), true, -1, false);
 		}
 
 		protected override void OnApplicationTick(float dt)
@@ -157,6 +232,24 @@ namespace MBFastDialogue
 			});
 		}
 
+		private bool matchesPattern(string name)
+		{
+			if(settings.whitelist.whitelistPatterns.Count == 0)
+			{
+				return true;
+			}
+
+			foreach(var pattern in settings.whitelist.whitelistPatterns)
+			{
+				if(name.Contains(pattern))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private void OnStateChange()
 		{
 			if (GameStateManager.Current.ActiveState is MissionState missionState && prevState is MapState prevMapState)
@@ -179,6 +272,12 @@ namespace MBFastDialogue
 				{
 					return;
 				}
+
+				if(!matchesPattern(PlayerEncounter.EncounteredParty.Leader.OriginCharacterStringId))
+				{
+					return;
+				}
+
 				GameStateManager.Current.PopState();
 				GameMenu.ActivateGameMenu("fast_combat_menu");
 			}
