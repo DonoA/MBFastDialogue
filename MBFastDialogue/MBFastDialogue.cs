@@ -1,4 +1,5 @@
-﻿using SandBox;
+﻿using Helpers;
+using SandBox;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -33,10 +34,6 @@ namespace MBFastDialogue
 
 	public class SubModule : MBSubModuleBase
 	{
-		private List<ConversationCharacterData> cached_otherSidePartners;
-		private List<ConversationCharacterData> cached_playerSidePartners;
-		private ConversationCharacterData cached_firstCharacterToTalk;
-
 		private GameState prevState;
 
 		private long pausedTicks = 0;
@@ -50,7 +47,7 @@ namespace MBFastDialogue
 		{
 			try
 			{
-				return this.cached_otherSidePartners[0].Party != null && this.cached_playerSidePartners[0].Party.MapFaction.IsAtWarWith(this.cached_otherSidePartners[0].Party.MapFaction);
+				return PlayerEncounter.EncounteredParty != null && PartyBase.MainParty.MapFaction.IsAtWarWith(PlayerEncounter.EncounteredParty.MapFaction);
 			}
 			catch (Exception ex)
 			{
@@ -71,7 +68,7 @@ namespace MBFastDialogue
 				new OnInitDelegate((args) => {
 					ReflectionUtil.ForceCall<object>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_on_init", new object[] { args });
 				}), GameOverlays.MenuOverlayType.Encounter, GameMenu.MenuFlags.none, null);
-			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_attack", "{=o1pZHZOF}{ATTACK_TEXT}!",
+			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_attack", "{=o1pZHZOF}Attack!",
 				new GameMenuOption.OnConditionDelegate((args) => {
 					return ShouldShowWarOptions() && ReflectionUtil.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args });
 				}),
@@ -94,8 +91,9 @@ namespace MBFastDialogue
 				}),
 				new GameMenuOption.OnConsequenceDelegate((args) =>
 				{
-					PlayerEncounter.Finish(true);
-					Campaign.Current.HandlePartyEncounter(this.cached_playerSidePartners[0].Party, this.cached_otherSidePartners[0].Party);
+					var encountered = PlayerEncounter.EncounteredParty;
+					MenuHelper.EncounterLeaveConsequence(args);
+					Campaign.Current.HandlePartyEncounter(PartyBase.MainParty, encountered);
 				}), false, -1, false);
 			campStarter.AddGameMenuOption("fast_combat_menu", "fast_combat_menu_surrend", "{=3nT5wWzb}Surrender.",
 				CampaignManagerConditionOf("game_menu_encounter_surrender_on_condition"),
@@ -111,22 +109,29 @@ namespace MBFastDialogue
 
 		protected override void OnApplicationTick(float dt)
 		{
-			if(GameStateManager.Current.ActiveState is MapState mapState)
+			try
 			{
-				if(Campaign.Current.TimeControlMode == CampaignTimeControlMode.Stop)
+				if (GameStateManager.Current.ActiveState is MapState mapState)
 				{
-					pausedTicks++;
+					if (Campaign.Current.TimeControlMode == CampaignTimeControlMode.Stop)
+					{
+						pausedTicks++;
+					}
+					else
+					{
+						pausedTicks = 0;
+					}
 				}
-				else
+
+				if (GameStateManager.Current != null && GameStateManager.Current.ActiveState != prevState)
 				{
-					pausedTicks = 0;
+					OnStateChange();
+					prevState = GameStateManager.Current.ActiveState;
 				}
 			}
-
-			if (GameStateManager.Current != null && GameStateManager.Current.ActiveState != prevState)
+			catch(Exception ex)
 			{
-				OnStateChange();
-				prevState = GameStateManager.Current.ActiveState;
+				InformationManager.DisplayMessage(new InformationMessage("MBFastDialogue generated an exception " + ex.Message, Color.Black));
 			}
 
 		}
@@ -174,13 +179,6 @@ namespace MBFastDialogue
 				{
 					return;
 				}
-				var _otherSidePartners = ReflectionUtil.ForceGet<List<ConversationCharacterData>>(convoLogic, "_otherSidePartners");
-				var _playerSidePartners = ReflectionUtil.ForceGet<List<ConversationCharacterData>>(convoLogic, "_playerSidePartners");
-				var _firstCharacterToTalk = ReflectionUtil.ForceGet<ConversationCharacterData>(convoLogic, "_firstCharacterToTalk");
-
-				cached_playerSidePartners = _playerSidePartners;
-				cached_otherSidePartners = _otherSidePartners;
-				cached_firstCharacterToTalk = _firstCharacterToTalk;
 				GameStateManager.Current.PopState();
 				GameMenu.ActivateGameMenu("fast_combat_menu");
 			}
