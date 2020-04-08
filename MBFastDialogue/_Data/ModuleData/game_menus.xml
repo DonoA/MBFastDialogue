@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--NOT USED-->
+<base type="game_menu">
+  <GameMenus>
+    <!--none game_menu_begin game_menu_town gui_bg_lord_base amb_attack_scene_bg-->
+    <game_menu id="fast_encounter" flags="0x0" color="0x0" default_text="{=AFJ3BvTH}You encounter some troops." mesh_name="amb_attack_scene_bg">
+      <!--
+      <menu_option id="fast_encounter_attack" text="{=o1pZHZOF}Attack!" on_condition="fast_encounter_attack_on_condition" on_consequence="fast_encounter_attack_on_consequence" />
+
+      <menu_option id="fast_encounter_attack_troops" text="{=rxSz5dY1}Send troops." on_condition="fast_encounter_attack_troops_on_condition" on_consequence="fast_encounter_attack_troops_on_consequence" />
+
+      <menu_option id="fast_encounter_getaway" text="{=qNgGoqmI}Try to get away." on_condition="fast_encounter_getaway_on_condition" on_consequence="fast_encounter_getaway_on_consequence" />
+
+      <menu_option id="fast_encounter_talk" text="{=qNgGoqmI}Converse." on_condition="fast_encounter_talk_on_condition" on_consequence="fast_encounter_talk_on_consequence" />
+
+      <menu_option id="fast_encounter_surrender" text="{=3nT5wWzb}Surrender." on_condition="fast_encounter_surrender_on_condition" on_consequence="fast_encounter_surrender_on_consequence" />
+
+      <menu_option id="fast_encounter_leave" text="{=2YYRyrOO}Leave..." on_condition="fast_encounter_leave_on_condition" on_consequence="fast_encounter_leave_on_consequence" />
+      -->
+      <menu_option id="fast_encounter_attack" text="{=o1pZHZOF}Attack!" on_condition="game_menu_encounter_attack_on_condition" on_consequence="game_menu_encounter_attack_on_consequence" />
+
+      <menu_option id="fast_encounter_attack_troops" text="{=rxSz5dY1}Send troops." on_condition="game_menu_encounter_order_attack_on_condition" on_consequence="game_menu_encounter_order_attack_on_consequence" />
+
+      <menu_option id="fast_encounter_getaway" text="{=qNgGoqmI}Try to get away." on_condition="game_menu_encounter_leave_your_soldiers_behind_on_condition" on_consequence="game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence" />
+
+      <menu_option id="fast_encounter_talk" text="{=qNgGoqmI}Converse." on_condition="fast_encounter_talk_on_condition" on_consequence="fast_encounter_talk_on_consequence" />
+
+      <menu_option id="fast_encounter_surrender" text="{=3nT5wWzb}Surrender." on_condition="game_menu_encounter_surrender_on_condition" on_consequence="fast_encounter_surrender_on_consequence" />
+
+      <menu_option id="fast_encounter_leave" text="{=2YYRyrOO}Leave..." on_condition="game_menu_encounter_leave_on_condition" on_consequence="game_menu_encounter_leave_on_consequence" />
+    </game_menu>
+  </GameMenus>
+</base>
