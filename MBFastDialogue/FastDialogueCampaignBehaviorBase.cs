@@ -1,4 +1,4 @@
-﻿using Helpers;
+using Helpers;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
@@ -9,9 +9,6 @@ using TaleWorlds.Library;
 
 namespace MBFastDialogue.CampaignBehaviors
 {
-	/// <summary>
-	/// Defines the fast encounter menu with special converse option
-	/// </summary>
 	public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
 	{
 		private EncounterGameMenuBehavior GetGlobalCampaignBehaviorManager() => Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
@@ -51,7 +48,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				null);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_attack",
+				$"{FastDialogueSubModule.FastEncounterMenu}_attack",
 				"{=o1pZHZOF}Attack!",
 				args =>
 				{
@@ -63,7 +60,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				false);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_troops",
+				$"{FastDialogueSubModule.FastEncounterMenu}_troops",
 				"{=rxSz5dY1}Send troops.",
 				(args) => {
 					return ShouldShowWarOptions() && ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
@@ -74,7 +71,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				false);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_getaway",
+				$"{FastDialogueSubModule.FastEncounterMenu}_getaway",
 				"{=qNgGoqmI}Try to get away.",
 				ConditionOf("game_menu_encounter_leave_your_soldiers_behind_on_condition"),
 				ConsequenceOf("game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence"),
@@ -83,7 +80,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				false);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_talk",
+				$"{FastDialogueSubModule.FastEncounterMenu}_talk",
 				"{=qNgGoqmI}Converse.",
 				args =>
 				{
@@ -99,7 +96,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				false);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_surrend",
+				$"{FastDialogueSubModule.FastEncounterMenu}_surrend",
 				"{=3nT5wWzb}Surrender.",
 				ConditionOf("game_menu_encounter_surrender_on_condition"),
 				args =>
@@ -112,7 +109,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				false);
 			campaignGameStarter.AddGameMenuOption(
 				FastDialogueSubModule.FastEncounterMenu,
-				"fast_encounter_leave",
+				$"{FastDialogueSubModule.FastEncounterMenu}_leave",
 				"{=2YYRyrOO}Leave...",
 				ConditionOf("game_menu_encounter_leave_on_condition"),
 				(args) =>
