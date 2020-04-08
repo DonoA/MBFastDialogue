@@ -50,6 +50,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Data Remove="_Data\settings.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="_Data\settings.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="_Data\settings.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lib.Harmony" Version="2.0.0.9" />
   </ItemGroup>
 

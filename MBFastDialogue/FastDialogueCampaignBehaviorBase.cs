@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helpers;
+using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Overlay;
@@ -8,6 +9,9 @@ using TaleWorlds.Library;
 
 namespace MBFastDialogue.CampaignBehaviors
 {
+	/// <summary>
+	/// Defines the fast encounter menu with special converse option
+	/// </summary>
 	public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
 	{
 		private EncounterGameMenuBehavior GetGlobalCampaignBehaviorManager() => Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
@@ -74,7 +78,6 @@ namespace MBFastDialogue.CampaignBehaviors
 				"{=qNgGoqmI}Try to get away.",
 				ConditionOf("game_menu_encounter_leave_your_soldiers_behind_on_condition"),
 				ConsequenceOf("game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence"),
-				//args => GameMenu.SwitchToMenu("try_to_get_away"),
 				false,
 				-1,
 				false);
@@ -90,9 +93,6 @@ namespace MBFastDialogue.CampaignBehaviors
 				args =>
 				{
 					PlayerEncounter.DoMeeting();
-					//PartyBase encounteredParty = PlayerEncounter.EncounteredParty;
-					//MenuHelper.EncounterLeaveConsequence(args);
-					//Campaign.Current.HandlePartyEncounter(PartyBase.MainParty, encounteredParty);
 				},
 				false,
 				-1,
@@ -115,7 +115,14 @@ namespace MBFastDialogue.CampaignBehaviors
 				"fast_encounter_leave",
 				"{=2YYRyrOO}Leave...",
 				ConditionOf("game_menu_encounter_leave_on_condition"),
-				ConsequenceOf("game_menu_encounter_leave_on_consequence"),
+				(args) =>
+				{
+					MenuHelper.EncounterLeaveConsequence(args);
+					if (PartyBase.MainParty.IsMobile && PartyBase.MainParty.MobileParty != null)
+					{
+						PartyBase.MainParty.MobileParty.IsDisorganized = false;
+					}
+				},
 				true,
 				-1,
 				false);

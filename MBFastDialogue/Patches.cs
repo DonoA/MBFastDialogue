@@ -9,8 +9,7 @@ using TaleWorlds.CampaignSystem.GameMenus;
 namespace MBFastDialogue.Patches
 {
 	/// <summary>
-	/// I guess patching it via postfix is better than directly adding out method to
-	/// GameMenuCallbackManager._gameMenuInitializationHandlers
+	/// Hook the menu setup method to ensure the fast encounter method is hooked correctly
 	/// </summary>
 	[HarmonyPatch(typeof(GameMenuCallbackManager), "InitializeState")]
 	public class GameMenuCallbackManagerPatch1
@@ -31,9 +30,7 @@ namespace MBFastDialogue.Patches
 	}
 
 	/// <summary>
-	/// I prefer to patch the menthod instead of using override
-	/// If we consider that multiple mods would want to override
-	/// GetEncounterMenu, this is the safest approach.
+	/// Catches game trying to setup a new map menu and subs in the fast encounter menu when appropriate
 	/// </summary>
 	[HarmonyPatch(typeof(StoryModeEncounterGameMenuModel), "GetEncounterMenu")]
 	public class StoryModeEncounterGameMenuModelPatch1
@@ -60,13 +57,18 @@ namespace MBFastDialogue.Patches
 		{
 			try
 			{
+				if(!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.OriginCharacterStringId))
+				{
+					return null;
+				}
+
 				var notEventSettlement = !encounteredPartyBase.IsSettlement && encounteredPartyBase.MapEvent == null; // not sure if naming is correct
 				var notMobile = !encounteredPartyBase.IsMobile;
 				var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
 				var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
-				var encounteredArmy = encounteredPartyBase.MobileParty.Army != null;
+				var hasEncounteredArmy = encounteredPartyBase.MobileParty.Army != null;
 
-				if (notEventSettlement && (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)))
+				if (!hasEncounteredArmy && notEventSettlement && (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)))
 				{
 					return FastDialogueSubModule.FastEncounterMenu;
 				}
