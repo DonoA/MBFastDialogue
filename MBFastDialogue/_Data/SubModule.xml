@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Module>
-	<Name value="Fast Dialogue"/>
+	<Name value="MBFastDialogue"/>
 	<Id value="MBFastDialogue"/>
 	<Version value="v2.0.0"/>
 	<SingleplayerModule value="true"/>

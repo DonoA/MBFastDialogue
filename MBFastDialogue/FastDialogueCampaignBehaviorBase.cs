@@ -62,7 +62,8 @@ namespace MBFastDialogue.CampaignBehaviors
 				FastDialogueSubModule.FastEncounterMenu,
 				$"{FastDialogueSubModule.FastEncounterMenu}_troops",
 				"{=rxSz5dY1}Send troops.",
-				(args) => {
+				(args) => 
+				{
 					return ShouldShowWarOptions() && ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
 				},
 				ConsequenceOf("game_menu_encounter_order_attack_on_consequence"),

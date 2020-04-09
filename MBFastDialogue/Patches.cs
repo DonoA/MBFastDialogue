@@ -40,10 +40,6 @@ namespace MBFastDialogue.Patches
 
 		private static void Postfix(StoryModeEncounterGameMenuModel __instance, ref string __result, PartyBase attackerParty, PartyBase defenderParty, bool startBattle, bool joinBattle)
 		{
-			if(__result != "encounter_meeting")
-			{
-				return;
-			}
 			var encounteredPartyBase = (PartyBase)GetEncounteredPartyBaseMethod.Invoke(__instance, new object[] { attackerParty, defenderParty });
 			var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
 
@@ -66,9 +62,8 @@ namespace MBFastDialogue.Patches
 				var notMobile = !encounteredPartyBase.IsMobile;
 				var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
 				var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
-				var hasEncounteredArmy = encounteredPartyBase.MobileParty.Army != null;
 
-				if (!hasEncounteredArmy && notEventSettlement && (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)))
+				if (notEventSettlement && (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)))
 				{
 					return FastDialogueSubModule.FastEncounterMenu;
 				}
