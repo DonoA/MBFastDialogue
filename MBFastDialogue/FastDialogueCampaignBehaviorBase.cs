@@ -43,7 +43,7 @@ namespace MBFastDialogue.CampaignBehaviors
 				FastDialogueSubModule.FastEncounterMenu,
 				"{=!}{ENCOUNTER_TEXT}",
 				Init,
-				GameOverlays.MenuOverlayType.None,
+				GameOverlays.MenuOverlayType.Encounter,
 				GameMenu.MenuFlags.none,
 				null);
 			campaignGameStarter.AddGameMenuOption(

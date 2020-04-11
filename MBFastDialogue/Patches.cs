@@ -58,12 +58,22 @@ namespace MBFastDialogue.Patches
 					return null;
 				}
 
-				var notEventSettlement = !encounteredPartyBase.IsSettlement && encounteredPartyBase.MapEvent == null; // not sure if naming is correct
+				if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
+				{
+					return null;
+				}
+
+				var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.Leader;
+				if (inOwnedKingdom)
+				{
+					return null;
+				}
+
 				var notMobile = !encounteredPartyBase.IsMobile;
 				var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
 				var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
 
-				if (notEventSettlement && (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)))
+				if (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement))
 				{
 					return FastDialogueSubModule.FastEncounterMenu;
 				}
