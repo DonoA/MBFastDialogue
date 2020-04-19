@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
+using TaleWorlds.Engine.Screens;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
@@ -22,7 +23,9 @@ namespace MBFastDialogue
 
 		public static FastDialogueSubModule? Instance { get; private set; }
 
-		public Settings settings { get; set; } =  new Settings();
+		public Settings settings { get; set; } = new Settings();
+
+		public bool running { get; private set; } = true;
 
 		public FastDialogueSubModule()
 		{
@@ -73,6 +76,17 @@ namespace MBFastDialogue
 			}
 
 			return false;
+		}
+
+		protected override void OnApplicationTick(float dt)
+		{
+			ScreenBase topScreen = ScreenManager.TopScreen;
+
+			if(topScreen != null && topScreen.DebugInput.IsControlDown() && topScreen.DebugInput.IsKeyPressed(TaleWorlds.InputSystem.InputKey.X))
+			{
+				running = !running;
+				InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
+			}
 		}
 
 		private static T? LoadSettingsFor<T>(string moduleName) where T : class

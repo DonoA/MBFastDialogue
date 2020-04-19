@@ -53,6 +53,11 @@ namespace MBFastDialogue.Patches
 		{
 			try
 			{
+				if(!FastDialogueSubModule.Instance.running)
+				{
+					return null;
+				}
+
 				if(!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.OriginCharacterStringId))
 				{
 					return null;
