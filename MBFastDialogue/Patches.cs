@@ -58,12 +58,12 @@ namespace MBFastDialogue.Patches
 					return null;
 				}
 
-				if(!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.OriginCharacterStringId))
+				if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
 				{
 					return null;
 				}
 
-				if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
+				if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.OriginCharacterStringId))
 				{
 					return null;
 				}
@@ -74,11 +74,19 @@ namespace MBFastDialogue.Patches
 					return null;
 				}
 
-				var notMobile = !encounteredPartyBase.IsMobile;
+				if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.OriginCharacterStringId.Contains("villager"))
+				{
+					return null;
+				}
+
+				if (!encounteredPartyBase.IsMobile)
+				{
+					return FastDialogueSubModule.FastEncounterMenu;
+				}
+
 				var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
 				var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
-
-				if (notMobile || (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement))
+				if (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)
 				{
 					return FastDialogueSubModule.FastEncounterMenu;
 				}
