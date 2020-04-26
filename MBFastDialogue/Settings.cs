@@ -9,6 +9,9 @@ namespace MBFastDialogue
 	{
 		[XmlElement("pattern_whitelist")]
 		public Whitelist whitelist { get; set; } = new Whitelist();
+
+		[XmlElement]
+		public string toggle_key { get; set; } = "X";
 	}
 
 	public class Whitelist

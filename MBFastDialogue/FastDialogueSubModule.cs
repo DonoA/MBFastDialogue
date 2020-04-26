@@ -25,6 +25,8 @@ namespace MBFastDialogue
 
 		public Settings settings { get; set; } = new Settings();
 
+		private TaleWorlds.InputSystem.InputKey toggleKey = TaleWorlds.InputSystem.InputKey.X;
+
 		public bool running { get; private set; } = true;
 
 		public FastDialogueSubModule()
@@ -39,6 +41,7 @@ namespace MBFastDialogue
 				if (newSettings != null)
 				{
 					settings = newSettings;
+					Enum.TryParse(settings.toggle_key, out toggleKey);
 				}
 			}
 			catch (Exception ex)
@@ -82,7 +85,7 @@ namespace MBFastDialogue
 		{
 			ScreenBase topScreen = ScreenManager.TopScreen;
 
-			if(topScreen != null && topScreen.DebugInput.IsControlDown() && topScreen.DebugInput.IsKeyPressed(TaleWorlds.InputSystem.InputKey.X))
+			if(topScreen != null && topScreen.DebugInput.IsControlDown() && topScreen.DebugInput.IsKeyPressed(toggleKey))
 			{
 				running = !running;
 				InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));

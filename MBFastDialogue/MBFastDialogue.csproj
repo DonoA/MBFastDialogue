@@ -5,7 +5,7 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <GameFolder>C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord</GameFolder>
+    <GameFolder>D:\Steam Games\steamapps\common\Mount &amp; Blade II Bannerlord</GameFolder>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
@@ -47,18 +47,6 @@
       <HintPath>%(Identity)</HintPath>
       <Private>False</Private>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Data Remove="_Data\settings.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="_Data\settings.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="_Data\settings.xml" />
   </ItemGroup>
 
   <ItemGroup>
