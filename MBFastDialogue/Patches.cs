@@ -5,6 +5,8 @@ using System.Reflection;
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
+using TaleWorlds.Core;
+using TaleWorlds.Library;
 
 namespace MBFastDialogue.Patches
 {
@@ -21,10 +23,17 @@ namespace MBFastDialogue.Patches
 
 		private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
 		{
-			if (menuId == FastDialogueSubModule.FastEncounterMenu)
+			try
 			{
-				MenuCallbackArgs args = new MenuCallbackArgs(state, null);
-				game_menu_encounter_on_initMethod.Invoke(null, new object[] { args });
+				if (menuId == FastDialogueSubModule.FastEncounterMenu)
+				{
+					MenuCallbackArgs args = new MenuCallbackArgs(state, null);
+					game_menu_encounter_on_initMethod.Invoke(null, new object[] { args });
+				}
+			}
+			catch (Exception ex)
+			{
+				InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to init menu", Color.FromUint(4282569842U)));
 			}
 		}
 	}
@@ -40,63 +49,62 @@ namespace MBFastDialogue.Patches
 
 		private static void Postfix(StoryModeEncounterGameMenuModel __instance, ref string __result, PartyBase attackerParty, PartyBase defenderParty, bool startBattle, bool joinBattle)
 		{
-			var encounteredPartyBase = (PartyBase)GetEncounteredPartyBaseMethod.Invoke(__instance, new object[] { attackerParty, defenderParty });
-			var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
-
-			if (result != null)
+			try
 			{
-				__result = result;
+				var encounteredPartyBase = (PartyBase)GetEncounteredPartyBaseMethod.Invoke(__instance, new object[] { attackerParty, defenderParty });
+				var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
+
+				if (result != null)
+				{
+					__result = result;
+				}
+			}
+			catch (Exception ex)
+			{ 
+				InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to handle interaction", Color.FromUint(4282569842U)));
 			}
 		}
 
 		private static string? GetEncounterMenu(PartyBase attackerParty, PartyBase defenderParty, PartyBase encounteredPartyBase)
 		{
-			try
-			{
-				if(!FastDialogueSubModule.Instance.running)
-				{
-					return null;
-				}
-
-				if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
-				{
-					return null;
-				}
-
-				if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.StringId))
-				{
-					return null;
-				}
-
-				var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.Leader;
-				if (inOwnedKingdom)
-				{
-					return null;
-				}
-
-				if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.StringId.Contains("villager"))
-				{
-					return null;
-				}
-
-				if (!encounteredPartyBase.IsMobile)
-				{
-					return FastDialogueSubModule.FastEncounterMenu;
-				}
-
-				var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
-				var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
-				if (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)
-				{
-					return FastDialogueSubModule.FastEncounterMenu;
-				}
-
-				return null;
-			}
-			catch(Exception ex)
+			if (!FastDialogueSubModule.Instance.running)
 			{
 				return null;
 			}
+
+			if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
+			{
+				return null;
+			}
+
+			if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.StringId))
+			{
+				return null;
+			}
+
+			var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.Leader;
+			if (inOwnedKingdom)
+			{
+				return null;
+			}
+
+			if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.StringId.Contains("villager"))
+			{
+				return null;
+			}
+
+			if (!encounteredPartyBase.IsMobile)
+			{
+				return FastDialogueSubModule.FastEncounterMenu;
+			}
+
+			var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
+			var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
+			if (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)
+			{
+				return FastDialogueSubModule.FastEncounterMenu;
+			}
+			return null;
 		}
 	}
 }
