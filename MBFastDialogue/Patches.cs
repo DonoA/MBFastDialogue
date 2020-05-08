@@ -63,7 +63,7 @@ namespace MBFastDialogue.Patches
 					return null;
 				}
 
-				if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.OriginCharacterStringId))
+				if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.StringId))
 				{
 					return null;
 				}
@@ -74,7 +74,7 @@ namespace MBFastDialogue.Patches
 					return null;
 				}
 
-				if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.OriginCharacterStringId.Contains("villager"))
+				if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.StringId.Contains("villager"))
 				{
 					return null;
 				}
