@@ -1,10 +1,13 @@
 ﻿using HarmonyLib;
-using StoryMode.GameModels;
+using StoryMode.GameComponents;
+//using StoryMode.GameModels;
 using System;
 using System.Reflection;
 
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
+using TaleWorlds.CampaignSystem.GameState;
+using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 
@@ -61,7 +64,7 @@ namespace MBFastDialogue.Patches
 			}
 			catch (Exception ex)
 			{ 
-				InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to handle interaction", Color.FromUint(4282569842U)));
+				InformationManager.DisplayMessage(new InformationMessage($"Fast Dialogue failed to handle interaction", Color.FromUint(4282569842U)));
 			}
 		}
 
@@ -77,18 +80,18 @@ namespace MBFastDialogue.Patches
 				return null;
 			}
 
-			if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Leader.StringId))
+			if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Id))
 			{
 				return null;
 			}
 
-			var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.Leader;
+            bool inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.LeaderHero.CharacterObject;
 			if (inOwnedKingdom)
 			{
 				return null;
 			}
 
-			if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Leader.StringId.Contains("villager"))
+            if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Id.Contains("villager"))
 			{
 				return null;
 			}

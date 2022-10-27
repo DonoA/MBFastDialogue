@@ -3,9 +3,11 @@ using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Overlay;
-using TaleWorlds.CampaignSystem.SandBox.CampaignBehaviors;
+using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.CampaignSystem.Encounters;
+using TaleWorlds.CampaignSystem.Party;
 
 namespace MBFastDialogue.CampaignBehaviors
 {
@@ -44,7 +46,7 @@ namespace MBFastDialogue.CampaignBehaviors
                 "{=!}{ENCOUNTER_TEXT}",
                 Init,
                 GameOverlays.MenuOverlayType.Encounter,
-                GameMenu.MenuFlags.none,
+                GameMenu.MenuFlags.None,
                 null);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
@@ -61,7 +63,7 @@ namespace MBFastDialogue.CampaignBehaviors
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_troops",
-                "{=rxSz5dY1}Send troops.",
+                "{=QfMeoKOm}Send troops.",
                 (args) =>
                 {
                     return ShouldShowWarOptions() && ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
@@ -82,7 +84,7 @@ namespace MBFastDialogue.CampaignBehaviors
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_talk",
-                "{=qNgGoqmI}Converse.",
+                "{=OPhlqUVl}Talk",
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Conversation;
@@ -118,7 +120,7 @@ namespace MBFastDialogue.CampaignBehaviors
                     MenuHelper.EncounterLeaveConsequence(args);
                     if (PartyBase.MainParty.IsMobile && PartyBase.MainParty.MobileParty != null)
                     {
-                        PartyBase.MainParty.MobileParty.IsDisorganized = false;
+                        PartyBase.MainParty.MobileParty.SetIsDisorganized(false);
                     }
                 },
                 true,
