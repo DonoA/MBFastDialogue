@@ -1,7 +1,0 @@
-<MBFastDialogue.Settings>
-	<pattern_whitelist>
-		 <!--pattern>looter</pattern-->
-		 <!--pattern>bandit</pattern-->
-	</pattern_whitelist>
-  <toggle_key>X</toggle_key>
-</MBFastDialogue.Settings>
