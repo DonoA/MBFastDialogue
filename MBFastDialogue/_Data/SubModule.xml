@@ -2,18 +2,27 @@
 <Module>
 	<Name value="MBFastDialogue"/>
 	<Id value="MBFastDialogue"/>
-	<Version value="v2.5.0"/>
+	<Version value="v2.5.2"/>
 	<SingleplayerModule value="true"/>
 	<MultiplayerModule value="false"/>
   <Official value="false" />
 	<DependedModules>
+    <DependModule Id="Bannerlord.Harmony" />
 		<DependedModule Id="Native"/>
 		<DependedModule Id="SandBoxCore"/>
 		<DependedModule Id="Sandbox"/>
 		<DependedModule Id="CustomBattle"/>
 		<DependedModule Id="StoryMode" />
-	</DependedModules> 
-	<SubModules>
+	</DependedModules>
+  <DependedModuleMetadatas>
+    <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="Native" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
+    <DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
+  </DependedModuleMetadatas>
+	<SubModules>  
 		<SubModule>
 			<Name value="MBFastDialogue"/>
 			<DLLName value="MBFastDialogue.dll"/>

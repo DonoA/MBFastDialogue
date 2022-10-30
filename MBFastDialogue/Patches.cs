@@ -1,15 +1,16 @@
 ﻿using HarmonyLib;
 using StoryMode.GameComponents;
+using SandBox.GameComponents;
 //using StoryMode.GameModels;
 using System;
 using System.Reflection;
-
-using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.CampaignSystem.GameComponents;
 
 namespace MBFastDialogue.Patches
 {
@@ -26,7 +27,7 @@ namespace MBFastDialogue.Patches
 
 		private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
 		{
-			try
+            try
 			{
 				if (menuId == FastDialogueSubModule.FastEncounterMenu)
 				{
@@ -44,18 +45,19 @@ namespace MBFastDialogue.Patches
 	/// <summary>
 	/// Catches game trying to setup a new map menu and subs in the fast encounter menu when appropriate
 	/// </summary>
-	[HarmonyPatch(typeof(StoryModeEncounterGameMenuModel), "GetEncounterMenu")]
+	[HarmonyPatch(typeof(DefaultEncounterGameMenuModel), "GetEncounterMenu")]
 	public class StoryModeEncounterGameMenuModelPatch1
 	{
-		private static MethodInfo GetEncounteredPartyBaseMethod { get; }
-			= typeof(StoryModeEncounterGameMenuModel).GetMethod("GetEncounteredPartyBase", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static MethodInfo GetEncounteredPartyBaseMethod { get; }
+			= typeof(DefaultEncounterGameMenuModel).GetMethod("GetEncounteredPartyBase", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		private static void Postfix(StoryModeEncounterGameMenuModel __instance, ref string __result, PartyBase attackerParty, PartyBase defenderParty, bool startBattle, bool joinBattle)
+		private static void Postfix(DefaultEncounterGameMenuModel __instance, ref string __result, PartyBase attackerParty, PartyBase defenderParty, bool startBattle, bool joinBattle)
 		{
 			try
 			{
 				var encounteredPartyBase = (PartyBase)GetEncounteredPartyBaseMethod.Invoke(__instance, new object[] { attackerParty, defenderParty });
-				var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
+                //InformationManager.DisplayMessage(new InformationMessage($"{encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
+                var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
 
 				if (result != null)
 				{
@@ -75,12 +77,12 @@ namespace MBFastDialogue.Patches
 				return null;
 			}
 
-			if(encounteredPartyBase.Id.Contains("locate_and_rescue_traveller_quest_raider_party"))
-            		{
-               			 return null;
-            		}
-			
-			if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
+            if(encounteredPartyBase.Id.Contains("locate_and_rescue_traveller_quest_raider_party"))
+            {
+                return null;
+            }
+
+            if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
 			{
 				return null;
 			}

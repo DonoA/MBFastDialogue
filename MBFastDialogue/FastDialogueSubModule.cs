@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Engine.Screens;
+using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.ScreenSystem;
@@ -26,7 +27,7 @@ namespace MBFastDialogue
 
         public Settings settings { get; set; } = new Settings();
 
-        private TaleWorlds.InputSystem.InputKey toggleKey = TaleWorlds.InputSystem.InputKey.X;
+        private TaleWorlds.InputSystem.InputKey toggleKey = InputKey.X;
 
         public bool running { get; private set; } = true;
 
@@ -83,10 +84,10 @@ namespace MBFastDialogue
         }
 
         protected override void OnApplicationTick(float dt)
-        {
+        {            
             ScreenBase topScreen = ScreenManager.TopScreen;
 
-            if (topScreen != null && topScreen.DebugInput.IsControlDown() && topScreen.DebugInput.IsKeyPressed(toggleKey))
+            if (topScreen != null && (Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl)) && Input.IsKeyPressed(toggleKey))
             {
                 running = !running;
                 InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
