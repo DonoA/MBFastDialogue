@@ -75,6 +75,11 @@ namespace MBFastDialogue.Patches
 				return null;
 			}
 
+			if(encounteredPartyBase.Id.Contains("locate_and_rescue_traveller_quest_raider_party"))
+            		{
+               			 return null;
+            		}
+			
 			if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
 			{
 				return null;
