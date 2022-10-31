@@ -2,12 +2,12 @@
 <Module>
 	<Name value="MBFastDialogue"/>
 	<Id value="MBFastDialogue"/>
-	<Version value="v2.5.2"/>
+	<Version value="v2.5.3"/>
 	<SingleplayerModule value="true"/>
 	<MultiplayerModule value="false"/>
   <Official value="false" />
 	<DependedModules>
-    <DependModule Id="Bannerlord.Harmony" />
+    <DependedModule Id="Bannerlord.Harmony" />
 		<DependedModule Id="Native"/>
 		<DependedModule Id="SandBoxCore"/>
 		<DependedModule Id="Sandbox"/>
