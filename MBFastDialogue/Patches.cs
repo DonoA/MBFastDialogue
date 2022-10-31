@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using StoryMode.GameComponents;
 using SandBox.GameComponents;
 //using StoryMode.GameModels;
@@ -72,7 +72,7 @@ namespace MBFastDialogue.Patches
 
 		private static string? GetEncounterMenu(PartyBase attackerParty, PartyBase defenderParty, PartyBase encounteredPartyBase)
 		{
-			if (!FastDialogueSubModule.Instance.running)
+            if (!FastDialogueSubModule.Instance.running)
 			{
 				return null;
 			}
@@ -86,6 +86,11 @@ namespace MBFastDialogue.Patches
 			{
 				return null;
 			}
+
+            if ((encounteredPartyBase.Id.Contains("lord") || encounteredPartyBase.MapFaction.IsMinorFaction) && !PartyBase.MainParty.MapFaction.IsAtWarWith(encounteredPartyBase.MapFaction))
+            {
+                return null;
+            }
 
 			if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Id))
 			{
