@@ -25,6 +25,10 @@ namespace MBFastDialogue.CampaignBehaviors
         {
             try
             {
+                if((PlayerEncounter.EncounteredParty.Id.Contains("caravan") || PlayerEncounter.EncounteredParty.Id.Contains("villager")) && (PartyBase.MainParty.MapFaction != PlayerEncounter.EncounteredParty.MapFaction))
+                {
+                    return true;
+                }
                 return PlayerEncounter.EncounteredParty != null && PartyBase.MainParty.MapFaction.IsAtWarWith(PlayerEncounter.EncounteredParty.MapFaction);
             }
             catch (Exception ex)
