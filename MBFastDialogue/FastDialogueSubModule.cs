@@ -54,7 +54,7 @@ namespace MBFastDialogue
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
-            InformationManager.DisplayMessage(new InformationMessage("Loaded " + ModuleName, Color.FromUint(4282569842U)));
+            InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.toggle_key}", Color.FromUint(4282569842U)));
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)

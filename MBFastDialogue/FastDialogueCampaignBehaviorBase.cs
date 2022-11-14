@@ -8,6 +8,7 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.Party;
+using StoryMode;
 
 namespace MBFastDialogue.CampaignBehaviors
 {
@@ -25,7 +26,17 @@ namespace MBFastDialogue.CampaignBehaviors
         {
             try
             {
-                if((PlayerEncounter.EncounteredParty.Id.Contains("caravan") || PlayerEncounter.EncounteredParty.Id.Contains("villager")) && (PartyBase.MainParty.MapFaction != PlayerEncounter.EncounteredParty.MapFaction))
+                if(PlayerEncounter.EncounteredParty != null && PlayerEncounter.EncounteredParty.Id.Contains("quest_party_template"))
+                {
+                    return true;
+                }
+                
+                if(PlayerEncounter.EncounteredParty != null && (PlayerEncounter.EncounteredMobileParty != null && (PlayerEncounter.EncounteredMobileParty.StringId.Contains("conspiracy") || PlayerEncounter.EncounteredMobileParty.StringId.Contains("conspirator"))))
+                {
+                    return true;
+                }
+                
+                if(PlayerEncounter.EncounteredParty != null && PlayerEncounter.EncounteredMobileParty != null && (PlayerEncounter.EncounteredMobileParty.IsCaravan || PlayerEncounter.EncounteredMobileParty.IsVillager) && (PartyBase.MainParty.MapFaction != PlayerEncounter.EncounteredParty.MapFaction))
                 {
                     return true;
                 }

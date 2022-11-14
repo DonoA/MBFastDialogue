@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using StoryMode.GameComponents;
 using SandBox.GameComponents;
 //using StoryMode.GameModels;
@@ -72,6 +72,14 @@ namespace MBFastDialogue.Patches
 
 		private static string? GetEncounterMenu(PartyBase attackerParty, PartyBase defenderParty, PartyBase encounteredPartyBase)
 		{
+            // Debug
+            //InformationManager.DisplayMessage(new InformationMessage($"Party ID : {encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
+
+            if(encounteredPartyBase.MobileParty != null)
+            {
+                InformationManager.DisplayMessage(new InformationMessage($"MobileParty StringId : {encounteredPartyBase.MobileParty.StringId}", Color.FromUint(4282569842U)));
+            }
+
             if (!FastDialogueSubModule.Instance.running)
 			{
 				return null;
@@ -87,7 +95,7 @@ namespace MBFastDialogue.Patches
 				return null;
 			}
 
-            if ((encounteredPartyBase.Id.Contains("lord") || encounteredPartyBase.MapFaction.IsMinorFaction) && !PartyBase.MainParty.MapFaction.IsAtWarWith(encounteredPartyBase.MapFaction))
+            if ((encounteredPartyBase.MapFaction.IsClan || (encounteredPartyBase.MobileParty != null && encounteredPartyBase.MobileParty.IsLordParty) || encounteredPartyBase.MapFaction.IsMinorFaction) && !PartyBase.MainParty.MapFaction.IsAtWarWith(encounteredPartyBase.MapFaction))
             {
                 return null;
             }
