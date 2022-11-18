@@ -73,12 +73,11 @@ namespace MBFastDialogue.Patches
 		private static string? GetEncounterMenu(PartyBase attackerParty, PartyBase defenderParty, PartyBase encounteredPartyBase)
 		{
             // Debug
-            //InformationManager.DisplayMessage(new InformationMessage($"Party ID : {encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
-
+            /*InformationManager.DisplayMessage(new InformationMessage($"Party ID : {encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
             if(encounteredPartyBase.MobileParty != null)
             {
                 InformationManager.DisplayMessage(new InformationMessage($"MobileParty StringId : {encounteredPartyBase.MobileParty.StringId}", Color.FromUint(4282569842U)));
-            }
+            }*/
 
             if (!FastDialogueSubModule.Instance.running)
 			{
