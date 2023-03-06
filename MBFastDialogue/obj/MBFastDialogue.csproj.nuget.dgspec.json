@@ -1,34 +1,34 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Dallen\\source\\repos\\MBFastDialogue\\MBFastDialogue\\MBFastDialogue.csproj": {}
+    "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\MBFastDialogue.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Dallen\\source\\repos\\MBFastDialogue\\MBFastDialogue\\MBFastDialogue.csproj": {
+    "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\MBFastDialogue.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Dallen\\source\\repos\\MBFastDialogue\\MBFastDialogue\\MBFastDialogue.csproj",
+        "projectUniqueName": "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\MBFastDialogue.csproj",
         "projectName": "MBFastDialogue",
-        "projectPath": "C:\\Users\\Dallen\\source\\repos\\MBFastDialogue\\MBFastDialogue\\MBFastDialogue.csproj",
-        "packagesPath": "C:\\Users\\Dallen\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Dallen\\source\\repos\\MBFastDialogue\\MBFastDialogue\\obj\\",
+        "projectPath": "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\MBFastDialogue.csproj",
+        "packagesPath": "C:\\Users\\XxX-FLO-XxX\\.nuget\\packages\\",
+        "outputPath": "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Dallen\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\XxX-FLO-XxX\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net481"
+          "net472"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net481": {
+          "net472": {
             "projectReferences": {}
           }
         },
@@ -39,9 +39,10 @@
         }
       },
       "frameworks": {
-        "net481": {
+        "net472": {
           "dependencies": {
             "Lib.Harmony": {
+              "include": "Compile",
               "target": "Package",
               "version": "[2.2.2, )"
             }

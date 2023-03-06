@@ -135,7 +135,7 @@ namespace MBFastDialogue.CampaignBehaviors
                     MenuHelper.EncounterLeaveConsequence(args);
                     if (PartyBase.MainParty.IsMobile && PartyBase.MainParty.MobileParty != null)
                     {
-                        PartyBase.MainParty.MobileParty.SetIsDisorganized(false);
+                        PartyBase.MainParty.MobileParty.SetDisorganized(false);
                     }
                 },
                 true,
