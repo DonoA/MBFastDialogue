@@ -13,9 +13,6 @@
         "packagesPath": "C:\\Users\\XxX-FLO-XxX\\.nuget\\packages\\",
         "outputPath": "E:\\DEV\\MODDING\\BANNERLORD\\MBFastDialogueUpdated\\MBFastDialogue\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
           "C:\\Users\\XxX-FLO-XxX\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -29,6 +26,7 @@
         },
         "frameworks": {
           "net472": {
+            "targetAlias": "net472",
             "projectReferences": {}
           }
         },
@@ -40,14 +38,19 @@
       },
       "frameworks": {
         "net472": {
+          "targetAlias": "net472",
           "dependencies": {
+            "Bannerlord.ReferenceAssemblies": {
+              "target": "Package",
+              "version": "[1.1.5.21456, )"
+            },
             "Lib.Harmony": {
               "include": "Compile",
               "target": "Package",
               "version": "[2.2.2, )"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
