@@ -1,23 +1,20 @@
 ﻿using HarmonyLib;
-using StoryMode.GameComponents;
-using SandBox.GameComponents;
 //using StoryMode.GameModels;
 using System;
 using System.Reflection;
-using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.CampaignSystem.Party;
-using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.CampaignSystem.GameComponents;
+using TaleWorlds.CampaignSystem;
 
 namespace MBFastDialogue.Patches
 {
-	/// <summary>
-	/// Hook the menu setup method to ensure the fast encounter method is hooked correctly
-	/// </summary>
-	[HarmonyPatch(typeof(GameMenuCallbackManager), "InitializeState")]
+    /// <summary>
+    /// Hook the menu setup method to ensure the fast encounter method is hooked correctly
+    /// </summary>
+    [HarmonyPatch(typeof(GameMenuCallbackManager), "InitializeState")]
 	public class GameMenuCallbackManagerPatch1
 	{
 		private static Type DefaultEncounterType { get; }
@@ -42,10 +39,31 @@ namespace MBFastDialogue.Patches
 		}
 	}
 
-	/// <summary>
-	/// Catches game trying to setup a new map menu and subs in the fast encounter menu when appropriate
-	/// </summary>
-	[HarmonyPatch(typeof(DefaultEncounterGameMenuModel), "GetEncounterMenu")]
+    // For other mods compatibility
+    // When a non-native menu option is added to menu ID "encounter", it is added as a Fast Dialogue menu option   
+    [HarmonyPatch(typeof(CampaignGameStarter), "AddGameMenuOption")]
+	public class CampaignGameStarterPatch1
+	{
+        private static void Postfix(CampaignGameStarter __instance, string menuId, string optionId, string optionText, GameMenuOption.OnConditionDelegate condition, GameMenuOption.OnConsequenceDelegate consequence, bool isLeave = false, int index = -1, bool isRepeatable = false, object relatedObject = null)
+        {
+			try
+			{
+				if (menuId == "encounter" && optionId != "continue_preparations" && optionId != "village_raid_action" && optionId != "village_force_volunteer_action" && optionId != "village_force_supplies_action" && optionId != "attack" && optionId != "capture_the_enemy" && optionId != "str_order_attack" && optionId != "leave_soldiers_behind" && optionId != "surrender" && optionId != "leave" && optionId != "go_back_to_settlement")
+				{
+					__instance.AddGameMenuOption(FastDialogueSubModule.FastEncounterMenu, optionId, optionText, condition, consequence, isLeave, index, isRepeatable, relatedObject);
+				}
+			}
+			catch(Exception ex)
+			{
+
+			}
+        }
+    }
+
+    /// <summary>
+    /// Catches game trying to setup a new map menu and subs in the fast encounter menu when appropriate
+    /// </summary>
+    [HarmonyPatch(typeof(DefaultEncounterGameMenuModel), "GetEncounterMenu")]
 	public class StoryModeEncounterGameMenuModelPatch1
 	{
         private static MethodInfo GetEncounteredPartyBaseMethod { get; }
